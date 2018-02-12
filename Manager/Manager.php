@@ -36,7 +36,28 @@ abstract class Manager
         echo $task->id . '||' . $task->parser . '||' . $task->subj_id . '||' . $task->subj_str . '||' . $task->reparse . '||' . $task->vars;
         return true;
     }
-    
+
+    /**********************************
+     * Встановлення задач для календаря
+     * --------------------------------
+     */
+    public static function calendarSet()
+    {
+        // Добавлення задач для майбутніх матчів
+        for ($delta = -1; $delta < CALENDAR_DEEP; $delta++) {
+            Task::addTask('calendar', null, date('Y-M-d', time() + 60*60*24 * ($delta + 1)), 1, 0, date('Y-m-d H:i:s', time()));
+        }
+
+        // Добавлення задач для матчів, що вже відбулися
+        $last_added_old_date = file_get_contents('Config/last_old_date.txt');
+        for ($delta = 0; $delta < OLD_DEEP; $delta++) {
+            $last_added_old_date = date('Y-M-d', strtotime($last_added_old_date) - 60*60*24);
+            Task::addTask('calendar', null, $last_added_old_date, 1, 0, date('Y-m-d H:i:s', time()));
+        }
+
+        file_put_contents('Config/last_old_date.txt', $last_added_old_date);
+    }
+
     /*************************************************
      * Викликається Зенкою після спаршування.
      * Запускає обробку PHP-скриптами спаршених даних.
@@ -118,8 +139,11 @@ abstract class Manager
 
         return $out;
     }
+
+
+
 /*
-//  ----------------------------------------------------------------------------        
+    //  ----------------------------------------------------------------------------
 //  reparser
 //  ----------------------------------------------------------------------------        
     public function reparser($vars)

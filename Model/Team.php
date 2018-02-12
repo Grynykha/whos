@@ -99,6 +99,18 @@ class Team
 //  ---------------------------------------------------------------------
 //  Збереження
 //  ---------------------------------------------------------------------
+    public static function isNational($team_id)
+    {
+        $DB = DB::Instance()->GetConnect();
+        $stmt = $DB->prepare("SELECT is_national FROM teams WHERE id = :id");
+        $stmt->bindValue(':id', $team_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        return (bool)$stmt->fetchColumn()[0];
+    }
+
+//  ---------------------------------------------------------------------
+//  Збереження
+//  ---------------------------------------------------------------------
     public function save()
     {
         if (!$this->inDB()){
@@ -245,7 +257,7 @@ class Team
 //  ---------------------------------------------------------------------
 //  Оновлення матчу
 //  ---------------------------------------------------------------------
-    protected function updTournament()
+    public function updTournament()
     {   
         $DB = DB::Instance()->GetConnect();
         $stmt = $DB->prepare("UPDATE teams SET tournament_id = :tournament_id, date_upd = :date_upd 

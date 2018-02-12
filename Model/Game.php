@@ -127,26 +127,26 @@ class Game
     public $team_1_corners_p4;
     public $team_2_corners_p4;
 //  перший гол
-    public $first_goal_time = null;
-    public $first_goal_team_id = null;
-    public $first_goal_player_id = null;
+    public $first_goal_time;
+    public $first_goal_team_id;
+    public $first_goal_player_id;
 //  перша жовта картка
-    public $first_yellow_card_time = null;
-    public $first_yellow_card_team_id = null;
-    public $first_yellow_card_player_id = null;
+    public $first_yellow_card_time;
+    public $first_yellow_card_team_id;
+    public $first_yellow_card_player_id;
 // перша червона картка
-    public $first_red_card_time = null;
-    public $first_red_card_team_id = null;
-    public $first_red_card_player_id = null;
+    public $first_red_card_time;
+    public $first_red_card_team_id;
+    public $first_red_card_player_id;
 // перший кутовий
-    public $first_corner_time = null;
-    public $first_corner_team_id = null;
-    public $first_corner_player_id = null;
+    public $first_corner_time;
+    public $first_corner_team_id;
+    public $first_corner_player_id;
 // перша заміна
-    public $first_substitution_time = null;
-    public $first_substitution_team_id = null;
-    public $first_substitution_player_id_on = null;
-    public $first_substitution_player_id_off = null;
+    public $first_substitution_time;
+    public $first_substitution_team_id;
+    public $first_substitution_player_id_on;
+    public $first_substitution_player_id_off;
 
     public $stadium_name;
 

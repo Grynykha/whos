@@ -20,11 +20,11 @@ abstract class Parser
      * Випаршування гравців на основі json
      * -----------------------------------
      * @param $players
-     * @param $game_id
+     * @param $game
      * @param $team_id
      * @return bool
      */
-    public static function playersFromJson($players, $game_id, $team_id): bool
+    public static function playersFromJson($players, $game, $team_id): bool
     {
         $k = 0;
         foreach ($players as $ws_player) {
@@ -38,7 +38,12 @@ abstract class Parser
             $player->number = $ws_player->shirtNo;
 
             $player->save();
-            $player->saveToGame($game_id, $team_id);
+            $player->saveToGame($game->id, $team_id);
+            if (strtotime($game->start) > time() and !Model\Team::isNational($team_id)) {
+                $player->curr_number = $player->number;
+                $player->curr_team_id = $team_id;
+                $player->updCurrTeamAndNumber();
+            }
             $k++;
         }
 
@@ -234,6 +239,13 @@ abstract class Parser
         $team_1->save();
         $team_2->save();
 
+        if (strtotime($game->start) > time() and !$region->national) {
+            $team_1->tournament_id = $tournament->id;
+            $team_2->tournament_id = $tournament->id;
+            $team_1->updTournament();
+            $team_2->updTournament();
+        }
+
         $game->save();
 
         $log->gameStart = $game->start;
@@ -367,8 +379,8 @@ abstract class Parser
 
             // ---------------------------------------------------------------------
             // Гравці
-            $t1_has_player = self::playersFromJson($json_events->home->players, $game->id, $game->team_1_id);
-            $t2_has_player = self::playersFromJson($json_events->away->players, $game->id, $game->team_2_id);
+            $t1_has_player = self::playersFromJson($json_events->home->players, $game, $game->team_1_id);
+            $t2_has_player = self::playersFromJson($json_events->away->players, $game, $game->team_2_id);
             //$response = true;
 
             // ---------------------------------------------------------------------

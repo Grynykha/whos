@@ -37,6 +37,12 @@ class Player
 //  чи потрібно апдейтити
     public $need_upd = false;
 
+    // Динамічне визначення актуального номеру
+    public $curr_number;
+    // Динамічне визначення актуальної команди
+    public $curr_team_id;
+
+
 
 //  ----------------------------------------------------------------------------
 //  Дані на матч (таблиця player_to_games)
@@ -134,9 +140,11 @@ class Player
     {   
         $DB = DB::Instance()->GetConnect();
         if ($this->id) {
-            $stmt = $DB->prepare("INSERT INTO players(id, nationality, born_date, born_region, born_place, position, height, weight, foot, img_src, date_added) 
-                VALUES(:id, :nationality, :born_date, :born_region, :born_place, :position, :height, :weight, :foot, :img_src, :date_added)");
+            $stmt = $DB->prepare("INSERT INTO players(id, curr_number, curr_team_id, nationality, born_date, born_region, born_place, position, height, weight, foot, img_src, date_added) 
+                VALUES(:id, :curr_number, :curr_team_id, :nationality, :born_date, :born_region, :born_place, :position, :height, :weight, :foot, :img_src, :date_added)");
             $stmt->bindValue(':id', $this->id, \PDO::PARAM_INT);
+            $stmt->bindValue(':curr_number', $this->curr_number, \PDO::PARAM_STR);
+            $stmt->bindValue(':curr_team_id', $this->curr_team_id, \PDO::PARAM_STR);
             $stmt->bindValue(':nationality', $this->nationality, \PDO::PARAM_STR);
             $stmt->bindValue(':born_date', $this->born_date);
             $stmt->bindValue(':born_region', $this->born_region, \PDO::PARAM_INT);
@@ -162,7 +170,25 @@ class Player
     }
 
 //  ---------------------------------------------------------------------
-//  Оновлення команди
+//  Оновлення номеру і команди гравця
+//  ---------------------------------------------------------------------
+    public function updCurrTeamAndNumber()
+    {
+        $DB = DB::Instance()->GetConnect();
+        $stmt = $DB->prepare("UPDATE players SET curr_number = :curr_number, curr_team_id = :curr_team_id
+            WHERE id = :id");
+
+        $stmt->execute(array(
+            "id" => $this->id,
+            "curr_number" => $this->curr_number,
+            "curr_team_id" => $this->curr_team_id
+        ));
+
+        return true;
+    }
+
+//  ---------------------------------------------------------------------
+//  Оновлення гравця
 //  ---------------------------------------------------------------------
     protected function upd()
     {
@@ -170,6 +196,8 @@ class Player
 
         $stmt = $DB->prepare("UPDATE players SET 
             nationality = :nationality,
+            curr_number = :curr_number,
+            curr_team_id = :curr_team_id,
             born_date = :born_date,
             born_region = :born_region,
             born_place = :born_place,
@@ -185,6 +213,8 @@ class Player
         $stmt->execute(array(
             "id" => $this->id,
             "nationality" => $this->nationality,
+            "curr_number" => $this->curr_number,
+            "curr_team_id" => $this->curr_team_id,
             "born_date" => $this->born_date,
             "born_region" => $this->born_region,
             "born_place" => $this->born_place,
